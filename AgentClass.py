@@ -4,6 +4,7 @@ import numpy as np
 class Agent:
     def __init__(self,numberAgents, grid):
         self.grid = grid    
+        #Test
         self.numberAgents = numberAgents
         self.x = np.zeros(numberAgents) #Each agent has a x and y coordinate in the grid
         self.y = np.zeros(numberAgents)
