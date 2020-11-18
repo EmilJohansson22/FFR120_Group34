@@ -4,8 +4,8 @@ import random
 class Enviroment:
     def __init__(self,gridSize):
         self.gridSize = gridSize
-        self.road = 0
-        self.building = 5
+        self.road = 1
+        self.building = 2
         self.empty = 0
         self.grid = np.zeros((gridSize,gridSize))
     
