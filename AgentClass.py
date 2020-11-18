@@ -4,7 +4,6 @@ import numpy as np
 class Agent:
     def __init__(self,numberAgents, grid):
         self.grid = grid    
-        #Test
         self.numberAgents = numberAgents
         self.x = np.zeros(numberAgents) #Each agent has a x and y coordinate in the grid
         self.y = np.zeros(numberAgents)
@@ -16,6 +15,7 @@ class Agent:
             tmpX = self.x[agent]
             tmpY = self.y[agent]
             #Spread to neighbors but be careful of boundaries in grid "two step neighbor"
+            tmpList = []
             for reach in range(rangeLength):
                 #tmpX + 1,tmpY
                 #Line for change

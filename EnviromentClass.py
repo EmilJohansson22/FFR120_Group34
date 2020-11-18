@@ -30,3 +30,5 @@ class Enviroment:
                 self.grid[i,v2] = self.building
             if i in v2:
                 self.grid[i,v1] = self.building
+
+
