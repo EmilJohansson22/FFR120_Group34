@@ -22,8 +22,8 @@ class Enviroment:
 
     def DeterministicEnviroment(self):
         #Fix different cells start with 9
-        v1 = [0,1,2,6,7,8]
-        v2 = [2,6]
+        v1 = [0,1,2,3,6,7,8,9]
+        v2 = [3,6]
         self.grid[:,:] = self.road
         for i in range(self.gridSize):
             if i in v1:

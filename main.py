@@ -3,7 +3,7 @@ import random
 import EnviromentClass
 
 def main():
-    test = EnviromentClass.Enviroment(9) #Has to be 9 as of now.
+    test = EnviromentClass.Enviroment(10) #Has to be 10 as of now.
     #test.BuildEnviroment()
     test.DeterministicEnviroment()
     print(test.grid)
