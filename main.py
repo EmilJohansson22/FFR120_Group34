@@ -12,6 +12,8 @@ def main():
     agents = AgentClass.Agent(2,test.grid)
     agents.agentRange(2)
     print(agents.status)
+    #I do a change
+    
 
 
 if __name__ == "__main__":
