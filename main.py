@@ -8,16 +8,10 @@ def main():
     #test.BuildEnviroment()
     test.DeterministicEnviroment()
     #print(test.grid)
+    #print(test)
     agents = AgentClass.Agent(2,test.grid)
     agents.agentRange(2)
     print(agents.status)
-    
-
-
-
-
-
-
 
 
 if __name__ == "__main__":
