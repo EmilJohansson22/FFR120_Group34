@@ -34,3 +34,11 @@ class Agent:
 
         self.status.append(tmpArray)
 
+    def GeneratePositions(grid, numberAgents):
+        possibleLocations = np.where(grid == 2):
+        for i in range(numberAgents):
+            randomPos = np.random.randint(len(possibleLocations[0])+1)
+            self.x[i] = possibleLocations[0][randomPos]
+            self.y[i] = possibleLocations[1][randomPos]
+     
+
