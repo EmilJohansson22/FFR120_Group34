@@ -51,3 +51,20 @@ class Agent:
             tmpList = list(zip(*tmpList))
             self.status.append(tmpList)
 
+    def MoveAgent(self,agent, cellOveloaded):
+        #Direction between cell overloaded and 
+        numberOverlaps = len(cellOveloaded)
+        x = self.x[agent]
+        y = self.y[agent]
+        status = self.status[agent]
+        if cellOveloaded:
+            return
+        else:
+            for i in range(numberOverlaps):#TODO several overlaps some kind averae where the new agent should move
+                xStatus = status[0][i]
+                yStatus = status[1][i]
+                xDir = (x- xStatus) /np.sqrt((x- xStatus)**2 + (y- yStatus)**2)
+                yDir = (y- yStatus)/np.sqrt((x- xStatus)**2 + (y- yStatus)**2)
+        
+        print('move agent')
+        #TODO make sure the updated position is on the grid cell with a buidling.

@@ -40,7 +40,7 @@ def main():
                         if xStatus[i] == compareX[j] and yStatus[i] == compareY[j] and compareDecay[j] + decayStatus[i] > threshold:
                             #The agent is not placed optimally
                             cellOverloaded.append(i)
-
+        agents.MoveAgent(agent, cellOverloaded)
         #Cell overloaded contains coordinates from xStatus,yStatus in which the agent overlaps with another agent.
         #Move the opposite direction of coordinates in cellOverloaded
 
