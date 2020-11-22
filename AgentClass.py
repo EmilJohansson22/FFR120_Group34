@@ -12,25 +12,42 @@ class Agent:
 
     def agentRange(self, rangeLength):
         self.status = []
+        ##TODO the origianl coordinate for the agent is not in agentRange - Status list
         for agent in range(self.numberAgents):
-            tmpX = self.x[agent]
-            tmpY = self.y[agent]
+            xx = [self.x[agent]]
+            yy = [self.y[agent]]
             #Spread to neighbors but be careful of boundaries in grid "two step neighbor"
-            tmpList = []
+            tmpList = []
             for reach in range(rangeLength):
-                #tmpX + 1,tmpY
-                #Line for change
-                #tmpX - 1,tmpY
-                #tmpX,tmpY + 1
-                #tmpX,tmpY + 1
-                if tmpX + 1 < np.size(self.grid[0])-1:
-                    tmp1 = (tmpX+1,tmpY)
-                if tmpX - 1 > 0:
-                    tmp2 = (tmpX-1,tmpY)
-                if tmpY + 1 < np.size(self.grid[0])-1:
-                    tmp3 = (tmpX,tmpY)
-                if tmpY - 1 > 0:
-                    tmp4 = (tmpX-1,tmpY)
-
-        self.status.append(tmpArray)
+                xxTmp = []
+                yyTmp = []
+                neighbor = len(xx)
+                for iNeigbour in range(neighbor):
+                    tmpX = xx[iNeigbour]
+                    tmpY = yy[iNeigbour]
+                    if tmpX + 1 < np.size(self.grid[0]):
+                        tmp1 = (tmpX+1,tmpY,1/(reach+1))
+                        tmpList.append(tmp1)
+                        xxTmp.append(tmpX+1)
+                        yyTmp.append(tmpY)
+                    if tmpX - 1 > 0:
+                        tmp2 = (tmpX-1,tmpY,1/(reach+1))
+                        tmpList.append(tmp2)
+                        xxTmp.append(tmpX-1)
+                        yyTmp.append(tmpY)
+                    if tmpY + 1 < np.size(self.grid[0]):
+                        tmp3 = (tmpX,tmpY,1/(reach+1))
+                        tmpList.append(tmp3)
+                        xxTmp.append(tmpX)
+                        yyTmp.append(tmpY+1)
+                    if tmpY - 1 > 0:
+                        tmp4 = (tmpX-1,tmpY,1/(reach+1))
+                        tmpList.append(tmp4)
+                        xxTmp.append(tmpX)
+                        yyTmp.append(tmpY-1)
+                xx = xxTmp
+                yy = yyTmp
+        
+            tmpList = list(zip(*tmpList))
+            self.status.append(tmpList)
 
