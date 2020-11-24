@@ -2,11 +2,53 @@ import numpy as np
 import random
 import EnviromentClass
 import AgentClass
+import time as timer
+from tkinter import *
+from tkinter import ttk
 
 def main():
-    test = EnviromentClass.Enviroment(10) #Has to be 10 as of now.
+
+    res = 500   # Animation resolution
+    tk = Tk()  
+    tk.geometry( str(int(res*1.1)) + 'x'  +  str(int(res*1.3)) )
+    tk.configure(background='white')
+
+    canvas = Canvas(tk, bd=2)            # Generate animation window 
+    tk.attributes('-topmost', 0)
+    canvas.place(x=res/20, y=res/20, height= res, width= res)
+    gridSize = 10 #Has to be 10 as of now.
+
+
+    test = EnviromentClass.Enviroment(gridSize) 
     #test.BuildEnviroment()
     test.DeterministicEnviroment()
+
+    #Build Grid
+    gridPlot = []
+    ccolor = ['black','gray','red']
+    for i in range(gridSize):     # Generate animated particles in Canvas 
+        for j in range(gridSize):     # Generate animated particles in Canvas 
+            if test.grid[i,j] == test.building:
+                gridPlot.append( canvas.create_rectangle( (i)*res/gridSize,                                           
+                                                    (j)*res/gridSize,                           
+                                                    (i+1)*res/gridSize,                               
+                                                    (j+1)*res/gridSize,                               
+                                                    outline=ccolor[0], fill=ccolor[0]) )
+            else:
+                gridPlot.append( canvas.create_rectangle( (i)*res/gridSize,                                           
+                                                    (j)*res/gridSize,                           
+                                                    (i+1)*res/gridSize,                               
+                                                    (j+1)*res/gridSize,                               
+                                                    outline=ccolor[1], ))
+
+    tk.update()
+
+    
+    
+    
+        
+    Tk.mainloop(canvas)
+
     #print(test.grid)
     #print(test)
     totalAgents = 2

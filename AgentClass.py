@@ -26,22 +26,22 @@ class Agent:
                     tmpX = xx[iNeigbour]
                     tmpY = yy[iNeigbour]
                     if tmpX + 1 < np.size(self.grid[0]):
-                        tmp1 = (tmpX+1,tmpY,1/(reach+1))
+                        tmp1 = (tmpX+1,tmpY,1) #TODO Third coorinate should decay with each step of reach. 
                         tmpList.append(tmp1)
                         xxTmp.append(tmpX+1)
                         yyTmp.append(tmpY)
                     if tmpX - 1 > 0:
-                        tmp2 = (tmpX-1,tmpY,1/(reach+1))
+                        tmp2 = (tmpX-1,tmpY,1)
                         tmpList.append(tmp2)
                         xxTmp.append(tmpX-1)
                         yyTmp.append(tmpY)
                     if tmpY + 1 < np.size(self.grid[0]):
-                        tmp3 = (tmpX,tmpY,1/(reach+1))
+                        tmp3 = (tmpX,tmpY,1)
                         tmpList.append(tmp3)
                         xxTmp.append(tmpX)
                         yyTmp.append(tmpY+1)
                     if tmpY - 1 > 0:
-                        tmp4 = (tmpX-1,tmpY,1/(reach+1))
+                        tmp4 = (tmpX-1,tmpY,1)
                         tmpList.append(tmp4)
                         xxTmp.append(tmpX)
                         yyTmp.append(tmpY-1)
@@ -52,19 +52,24 @@ class Agent:
             self.status.append(tmpList)
 
     def MoveAgent(self,agent, cellOveloaded):
-        #Direction between cell overloaded and 
+        ## TODO Make sure the agent moves to a "building " cell
         numberOverlaps = len(cellOveloaded)
         x = self.x[agent]
         y = self.y[agent]
+        print("Agent x before: ",x)
+        print("Cell overloaded: ", cellOveloaded)
         status = self.status[agent]
-        if cellOveloaded:
+        if not cellOveloaded:
             return
         else:
             for i in range(numberOverlaps):#TODO several overlaps some kind averae where the new agent should move
-                xStatus = status[0][i]
-                yStatus = status[1][i]
-                xDir = (x- xStatus) /np.sqrt((x- xStatus)**2 + (y- yStatus)**2)
+                xStatus = status[0][i] #Overlapping x coordinate
+                yStatus = status[1][i] #ovelapping y coordinate
+                xDir = (x- xStatus) /np.sqrt((x- xStatus)**2 + (y- yStatus)**2) #Normalized direction of overlap move agent away from overlap
                 yDir = (y- yStatus)/np.sqrt((x- xStatus)**2 + (y- yStatus)**2)
+            self.x[agent] = self.x[agent] -round(xDir)
+            self.y[agent] =  self.y[agent] -round(yDir)
+        print("agent x after: ", self.x[agent])
         
         print('move agent')
         #TODO make sure the updated position is on the grid cell with a buidling.
