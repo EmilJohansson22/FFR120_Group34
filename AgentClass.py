@@ -5,40 +5,97 @@ import numpy as np
 class Agent:
     def __init__(self,numberAgents, grid):
         self.grid = grid    
-        #Test
         self.numberAgents = numberAgents
         self.x = np.zeros(numberAgents) #Each agent has a x and y coordinate in the grid
         self.y = np.zeros(numberAgents)
         self.status = []
+        self.gridSize = np.size(self.grid[0])
 
     def agentRange(self, rangeLength):
         self.status = []
+        ##TODO the origianl coordinate for the agent is not in agentRange - Status list
         for agent in range(self.numberAgents):
-            tmpX = self.x[agent]
-            tmpY = self.y[agent]
+            xx = [self.x[agent]]
+            yy = [self.y[agent]]
             #Spread to neighbors but be careful of boundaries in grid "two step neighbor"
+            tmpList = []
             for reach in range(rangeLength):
-                #tmpX + 1,tmpY
-                #Line for change
-                #tmpX - 1,tmpY
-                #tmpX,tmpY + 1
-                #tmpX,tmpY + 1
-                if tmpX + 1 < np.size(self.grid[0])-1:
-                    tmp1 = (tmpX+1,tmpY)
-                if tmpX - 1 > 0:
-                    tmp2 = (tmpX-1,tmpY)
-                if tmpY + 1 < np.size(self.grid[0])-1:
-                    tmp3 = (tmpX,tmpY)
-                if tmpY - 1 > 0:
-                    tmp4 = (tmpX-1,tmpY)
+                xxTmp = []
+                yyTmp = []
+                neighbor = len(xx)
+                for iNeigbour in range(neighbor):
+                    tmpX = xx[iNeigbour]
+                    tmpY = yy[iNeigbour]
+                    if tmpX + 1 < np.size(self.grid[0]):
+                        tmp1 = (tmpX+1,tmpY,1) #TODO Third coorinate should decay with each step of reach. 
+                        tmpList.append(tmp1)
+                        xxTmp.append(tmpX+1)
+                        yyTmp.append(tmpY)
+                    if tmpX - 1 > 0:
+                        tmp2 = (tmpX-1,tmpY,1)
+                        tmpList.append(tmp2)
+                        xxTmp.append(tmpX-1)
+                        yyTmp.append(tmpY)
+                    if tmpY + 1 < np.size(self.grid[0]):
+                        tmp3 = (tmpX,tmpY,1)
+                        tmpList.append(tmp3)
+                        xxTmp.append(tmpX)
+                        yyTmp.append(tmpY+1)
+                    if tmpY - 1 > 0:
+                        tmp4 = (tmpX-1,tmpY,1)
+                        tmpList.append(tmp4)
+                        xxTmp.append(tmpX)
+                        yyTmp.append(tmpY-1)
+                xx = xxTmp
+                yy = yyTmp
+        
+            tmpList = list(zip(*tmpList))
+            self.status.append(tmpList)
 
-        self.status.append(tmpArray)
+    def MoveAgent(self,agent, cellOveloaded):
+        ## TODO Make sure the agent moves to a "building " cell
+        if not cellOveloaded:
+            return
+        else:
+            xAgent = self.x[agent]
+            yAgent = self.y[agent]
+            #move backwards from first agent found that has overlap Fix so it moves away from average of all overlapping agents or something
+            xMove = self.x[cellOveloaded[0]]
+            yMove = self.y[cellOveloaded[0]]
+            directionX = (xMove - xAgent) / np.sqrt((xMove - xAgent)**2 + (yMove - yAgent)**2)
+            directionY = (yMove - yAgent) / np.sqrt((xMove - xAgent)**2 + (yMove - yAgent)**2)
+            self.x[agent]  -= round(directionX)
+            self.y[agent]  -= round(directionY)
 
-    def GeneratePositions(grid, numberAgents):
-        possibleLocations = np.where(grid == 2):
-        for i in range(numberAgents):
-            randomPos = np.random.randint(len(possibleLocations[0])+1)
-            self.x[i] = possibleLocations[0][randomPos]
-            self.y[i] = possibleLocations[1][randomPos]
-     
 
+
+
+
+
+        #     numberOverlaps = len(cellOveloaded)
+        #     x = self.x[agent]
+        #     y = self.y[agent]
+        #     currentStatus = self.status[agent]
+        #     xStatus = currentStatus[0]
+        #     yStatus = currentStatus[1]
+        #     print("Agent x before: ",x)
+        #     print("Cell overloaded: ", cellOveloaded)
+        #     status = self.status[agent]
+
+    
+        #     print("length of status: ", len(xStatus))
+        #     for i in cellOveloaded:#TODO several overlaps some kind averae where the new agent should move
+        #         xx = xStatus[i] #Overlapping x coordinate
+        #         yy = xStatus[i] #ovelapping y coordinate
+        #         xDir = (x- xx) /np.sqrt((x- xx)**2 + (y- yy)**2) #Normalized direction of overlap move agent away from overlap
+        #         yDir = (y- yy)/np.sqrt((x- xx)**2 + (y- yy)**2)
+            
+        #     #Check boundary
+        #     if not self.x[agent] == 0 or not self.x[agent] == self.gridSize:
+        #         self.x[agent] = self.x[agent] - round(xDir)
+        #     if not self.y[agent] == 0 or not self.y[agent] == self.gridSize:
+        #         self.y[agent] =  self.y[agent] - round(yDir)
+        #     print("agent x after: ", self.x[agent])
+        
+        #     print('move agent')
+        # #TODO make sure the updated position is on the grid cell with a buidling.
