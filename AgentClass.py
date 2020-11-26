@@ -11,7 +11,7 @@ class Agent:
         self.status = []
         self.gridSize = np.size(self.grid[0])
         self.buildingLocations = np.where(self.grid == 2)
-        self.occupied = np.zeros((self.gridSize, self.gridSize)) - 1 #Lists if the grid-tile is occupied with the agents index, and if not the list has a -1 value in that place.
+        self.occupied = np.full((self.gridSize, self.gridSize),-1)  #Lists if the grid-tile is occupied with the agents index, and if not the list has a -1 value in that place.
     def agentRange(self, rangeLength):
         self.status = []
         ##TODO the origianl coordinate for the agent is not in agentRange - Status list
@@ -58,21 +58,23 @@ class Agent:
         if not cellOveloaded:
             return
         else:
-            xAgent = self.x[agent]
-            yAgent = self.y[agent]
+            xAgent = int(self.x[agent]) #Needs to be forced to an integer, otherwise the program does not identify 3.0 as 3 for some reason.
+            yAgent = int(self.y[agent])
             #move backwards from first agent found that has overlap Fix so it moves away from average of all overlapping agents or something
             xMove = self.x[cellOveloaded[0]]
-            yMove = self.y[cellOveloaded[0]]
+            yMove = self.y[cellOveloaded[0]] # For some reason xMove and yMove are equal to xAgent and yAgent alot of the time
             directionX = (xMove - xAgent) / np.sqrt((xMove - xAgent)**2 + (yMove - yAgent)**2)
-            directionY = (yMove - yAgent) / np.sqrt((xMove - xAgent)**2 + (yMove - yAgent)**2)
+            directionY = (yMove - yAgent) / np.sqrt((xMove - xAgent)**2 + (yMove - yAgent)**2) 
+            if np.isnan(directionX) or np.isnan(directionY):
+                SystemExit("The direction evaluates as NaN")
             newX = round(xAgent  - round(directionX))
             newY = round(xAgent  - round(directionY))
             
-            if self.grid[newX][newY] == 2 and self.occupied[newX][newY] == -1:
-                self.x[agent]  -= round(directionX)
-                self.y[agent]  -= round(directionY)
-                self.occupied[self.x[agent]][self.y[agent]] = agent
+            if newX <= self.gridSize-1 and newY <= self.gridSize-1 and self.grid[newX][newY] == 2 and self.occupied[newX][newY] == -1:
                 self.occupied[xAgent][yAgent] = -1
+                self.x[agent]  = newX
+                self.y[agent]  = newY
+                self.occupied[newX][newY] = agent
             else:
                 distancesFromBuildings = np.sqrt((newX - self.buildingLocations[0][:])**2 + (newY - self.buildingLocations[1][:])**2) #Lists the distances to the closest tile with a building on it compared to the suggest new point
                 while True:
@@ -81,13 +83,15 @@ class Agent:
                     newX = self.buildingLocations[0][closestBuildings[0][chosenBuilding]]
                     newY = self.buildingLocations[1][closestBuildings[0][chosenBuilding]]
                     if self.occupied[newX][newY] == -1:
+                        self.occupied[xAgent][yAgent] = -1 #Makes the old tile usuable for other agents
                         self.x[agent] = newX
                         self.y[agent] = newY
                         self.occupied[newX][newY] = agent #Updates the building occupancy
-                        self.occupied[xAgent][yAgent] = -1 #Makes the old tile usuable for other agents
+                        print("Found")
                         break
                     else:
                         distancesFromBuildings = np.delete(distancesFromBuildings,closestBuildings[0][chosenBuilding]) #Removes the tile from consideration
+                        print("Removing")
                 
 
 
