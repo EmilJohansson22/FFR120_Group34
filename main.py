@@ -45,14 +45,15 @@ def main():
 
     #print(test.grid)
     #print(test)
-    totalAgents = 3
+    totalAgents = 4
     agents = AgentClass.Agent(totalAgents,test.grid)
-    agents.x[0] = 5
-    agents.y[0] = 5
-    agents.x[1] = 6
-    agents.y[1] = 6
-    agents.x[2] = 3
-    agents.y[2] = 3
+    #agents.x[0] = 5
+    #agents.y[0] = 5
+    #agents.x[1] = 6
+    #agents.y[1] = 6
+    #agents.x[2] = 3
+    #agents.y[2] = 3
+    agents.GeneratePositions(test.grid)
     agents.agentRange(2)
     # print(agents.status)
     # print("A0\n",agents.status[0]) #Gets agent 0 status with x, y and some decay value...

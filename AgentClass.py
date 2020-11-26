@@ -10,7 +10,8 @@ class Agent:
         self.y = np.zeros(numberAgents)
         self.status = []
         self.gridSize = np.size(self.grid[0])
-
+        self.buildingLocations = np.where(self.grid == 2)
+        self.occupied = np.zeros((self.gridSize, self.gridSize)) - 1 #Lists if the grid-tile is occupied with the agents index, and if not the list has a -1 value in that place.
     def agentRange(self, rangeLength):
         self.status = []
         ##TODO the origianl coordinate for the agent is not in agentRange - Status list
@@ -64,8 +65,30 @@ class Agent:
             yMove = self.y[cellOveloaded[0]]
             directionX = (xMove - xAgent) / np.sqrt((xMove - xAgent)**2 + (yMove - yAgent)**2)
             directionY = (yMove - yAgent) / np.sqrt((xMove - xAgent)**2 + (yMove - yAgent)**2)
-            self.x[agent]  -= round(directionX)
-            self.y[agent]  -= round(directionY)
+            newX = round(xAgent  - round(directionX))
+            newY = round(xAgent  - round(directionY))
+            
+            if self.grid[newX][newY] == 2 and self.occupied[newX][newY] == -1:
+                self.x[agent]  -= round(directionX)
+                self.y[agent]  -= round(directionY)
+                self.occupied[self.x[agent]][self.y[agent]] = agent
+                self.occupied[xAgent][yAgent] = -1
+            else:
+                distancesFromBuildings = np.sqrt((newX - self.buildingLocations[0][:])**2 + (newY - self.buildingLocations[1][:])**2) #Lists the distances to the closest tile with a building on it compared to the suggest new point
+                while True:
+                    closestBuildings = np.where((distancesFromBuildings == min(distancesFromBuildings)))
+                    chosenBuilding = np.random.randint(len(closestBuildings))
+                    newX = self.buildingLocations[0][closestBuildings[0][chosenBuilding]]
+                    newY = self.buildingLocations[1][closestBuildings[0][chosenBuilding]]
+                    if self.occupied[newX][newY] == -1:
+                        self.x[agent] = newX
+                        self.y[agent] = newY
+                        self.occupied[newX][newY] = agent #Updates the building occupancy
+                        self.occupied[xAgent][yAgent] = -1 #Makes the old tile usuable for other agents
+                        break
+                    else:
+                        distancesFromBuildings = np.delete(distancesFromBuildings,closestBuildings[0][chosenBuilding]) #Removes the tile from consideration
+                
 
 
 
@@ -99,3 +122,11 @@ class Agent:
         
         #     print('move agent')
         # #TODO make sure the updated position is on the grid cell with a buidling.
+
+    def GeneratePositions(self, grid):
+        possibleLocations = np.where(grid == 2)
+        for i in range(self.numberAgents):
+            randomPos = np.random.randint(len(possibleLocations[0]))
+            self.x[i] = possibleLocations[0][randomPos]
+            self.y[i] = possibleLocations[1][randomPos]
+            self.occupied[possibleLocations[0][randomPos]][possibleLocations[1][randomPos]] = i #Shows which agent is occupying which tile
