@@ -130,7 +130,11 @@ class Agent:
     def GeneratePositions(self, grid):
         possibleLocations = np.where(grid == 2)
         for i in range(self.numberAgents):
-            randomPos = np.random.randint(len(possibleLocations[0]))
-            self.x[i] = possibleLocations[0][randomPos]
-            self.y[i] = possibleLocations[1][randomPos]
-            self.occupied[possibleLocations[0][randomPos]][possibleLocations[1][randomPos]] = i #Shows which agent is occupying which tile
+            while True:
+                randomPos = np.random.randint(len(possibleLocations[0]))
+                if  self.occupied[possibleLocations[0][randomPos]][possibleLocations[1][randomPos]] == -1:
+                    self.x[i] = possibleLocations[0][randomPos]
+                    self.y[i] = possibleLocations[1][randomPos] 
+                    self.occupied[possibleLocations[0][randomPos]][possibleLocations[1][randomPos]] = i #Shows which agent is occupying which tile
+                    break
+                
