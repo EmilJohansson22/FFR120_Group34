@@ -1,7 +1,6 @@
 import numpy as np
 
-#comment
-#comment
+
 class Agent:
     def __init__(self,numberAgents, grid, rangeLength = 2):
         self.grid = grid    
