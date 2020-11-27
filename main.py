@@ -123,7 +123,7 @@ def main():
             agents.MoveAgent(agent, cellOverloaded)
             canvas.move(agentPlot[agent], (agents.x[agent]-xOld) *res/gridSize, (agents.y[agent]-yOld)*res/gridSize)
             tk.update()
-            #timer.sleep(3)
+            timer.sleep(1)
     print(agents.occupied)
     tk.update()
     print("All x",agents.x)        
