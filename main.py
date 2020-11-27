@@ -82,8 +82,9 @@ def main():
 
     #TODO When two agents are on the same spot an error occurs
     for i in range(20):
+        print("iteration: ", i)
         for agent in range(totalAgents): ##TODO make the list a permutation of each agent
-            print("Agent number\n",agent)
+            #print("Agent number\n",agent)
             agents.agentRange()
             xOld = agents.x[agent]
             yOld = agents.y[agent]
@@ -122,7 +123,7 @@ def main():
             agents.MoveAgent(agent, cellOverloaded)
             canvas.move(agentPlot[agent], (agents.x[agent]-xOld) *res/gridSize, (agents.y[agent]-yOld)*res/gridSize)
             tk.update()
-            #timer.sleep(1)
+            #timer.sleep(0.5)
     tk.update()
     print("All x",agents.x)        
     print("All y",agents.y)        

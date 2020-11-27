@@ -14,7 +14,6 @@ class Agent:
         self.rangeLength = rangeLength
 
     def GeneratePositions(self, updateOne = []):
-        
         if updateOne:
             print('only one agent random position update')
             for i in updateOne:
@@ -30,6 +29,8 @@ class Agent:
                 self.y[i] = y
                 self.occupied[x][y] = i #Shows which agent is occupying which tile
             return
+        
+        
         possibleLocations = np.where(self.grid == 2)
         for i in range(self.numberAgents):
             randomPos = np.random.randint(len(possibleLocations[0]))
@@ -88,6 +89,7 @@ class Agent:
             
             directionX = 0
             directionY = 0
+            totalDistance = 0
             for allOverlap in cellOveloaded:
             #for abc in range(1):
             #    allOverlap = cellOveloaded[0]
@@ -95,15 +97,21 @@ class Agent:
                 yMove = self.y[allOverlap]
                 distance = np.sqrt((xMove - xAgent)**2 + (yMove - yAgent)**2)
                 if distance != 0:
-                    directionX = (xMove - xAgent) / distance
-                    directionY = (yMove - yAgent) / distance
+                    directionX += (xMove - xAgent) / distance #Unit vector
+                    directionY += (yMove - yAgent) / distance
+                    totalDistance  += distance
                 else:
-                    self.GeneratePositions(updateOne = [agent]) #Randomly move the overlapping agent to a new position
-                    continue
-                newX = round(xAgent  - round(directionX))
-                newX = int(newX)
-                newY = round(xAgent  - round(directionY))
-                newY = int(newY)
+                    #self.GeneratePositions(updateOne = [agent]) #Randomly move the overlapping agent to a new position
+                    continue #Skips this iteration and goes back to for allOverlap in cellOverloaded.
+            
+            #directionX = directionX/totalDistance
+            #directionY = directionY/totalDistance
+            #scaleFactor = 3/totalDistance
+            scaleFactor = 1
+            newX = round(xAgent  - round(directionX)*scaleFactor)
+            newX = int(newX)
+            newY = round(xAgent  - round(directionY)*scaleFactor)
+            newY = int(newY)
 
 
             # if newX //self.gridSize == 0 and newY // self.gridSize == 0 and self.occupied[newX][newY] == -1: 
@@ -112,8 +120,8 @@ class Agent:
             #     self.y[agent]  = newY
             #     self.occupied[newX][newY] = agent
 
-            
-            
+        
+        
 
             if newX // self.gridSize == 0 and newY // self.gridSize == 0 and self.grid[newX][newY] == 2 and self.occupied[newX][newY] == -1: 
                 self.occupied[xAgent][yAgent] = -1
@@ -132,29 +140,30 @@ class Agent:
                         self.x[agent] = newX
                         self.y[agent] = newY
                         self.occupied[newX][newY] = agent #Updates the building occupancy
-                        print("Found")
+                        #print("Found")
                         break
                     else:
                         distancesFromBuildings = np.delete(distancesFromBuildings,closestBuildings[0][chosenBuilding]) #Removes the tile from consideration
-                        print("Removing")
-                # distancesFromBuildings = np.sqrt((newX - self.buildingLocations[0][:])**2 + (newY - self.buildingLocations[1][:])**2) #Lists the distances to the closest tile with a building on it compared to the suggest new point
-                # while True: #TODO This function seems to remove a bunch of distances and throw error when distancesFromBuilding is empty
-                #     print("Closest buidling list", distancesFromBuildings)
-                #     closestBuildings = np.where((distancesFromBuildings == min(distancesFromBuildings)))
-                #     chosenBuilding = np.random.randint(len(closestBuildings))
-                #     newX = self.buildingLocations[0][closestBuildings[0][chosenBuilding]]
-                #     newY = self.buildingLocations[1][closestBuildings[0][chosenBuilding]]
-                #     tmpabc = True
-                #     #if tmpabc:
-                #     if self.occupied[newX][newY] == -1:
-                #         self.occupied[xAgent][yAgent] = -1 #Makes the old tile usuable for other agents
-                #         self.x[agent] = newX
-                #         self.y[agent] = newY
-                #         self.occupied[newX][newY] = agent #Updates the building occupancy
-                #         print("Found")
-                #         break
-                #     else:
-                #         distancesFromBuildings = np.delete(distancesFromBuildings,closestBuildings[0][chosenBuilding]) #Removes the tile from consideration
-                #         #print("Removing")
-            
+                        #print(distancesFromBuildings)
+                        #print("Removing")
+                    # distancesFromBuildings = np.sqrt((newX - self.buildingLocations[0][:])**2 + (newY - self.buildingLocations[1][:])**2) #Lists the distances to the closest tile with a building on it compared to the suggest new point
+                    # while True: #TODO This function seems to remove a bunch of distances and throw error when distancesFromBuilding is empty
+                    #     print("Closest buidling list", distancesFromBuildings)
+                    #     closestBuildings = np.where((distancesFromBuildings == min(distancesFromBuildings)))
+                    #     chosenBuilding = np.random.randint(len(closestBuildings))
+                    #     newX = self.buildingLocations[0][closestBuildings[0][chosenBuilding]]
+                    #     newY = self.buildingLocations[1][closestBuildings[0][chosenBuilding]]
+                    #     tmpabc = True
+                    #     #if tmpabc:
+                    #     if self.occupied[newX][newY] == -1:
+                    #         self.occupied[xAgent][yAgent] = -1 #Makes the old tile usuable for other agents
+                    #         self.x[agent] = newX
+                    #         self.y[agent] = newY
+                    #         self.occupied[newX][newY] = agent #Updates the building occupancy
+                    #         print("Found")
+                    #         break
+                    #     else:
+                    #         distancesFromBuildings = np.delete(distancesFromBuildings,closestBuildings[0][chosenBuilding]) #Removes the tile from consideration
+                    #         #print("Removing")
+                
 
