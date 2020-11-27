@@ -112,9 +112,11 @@ class Agent:
             print("x,y dir",directionX,"-",directionY)
             scaleFactor = 1
             newX = (xAgent  - (directionX)*scaleFactor)
-            newX = int(newX)
+            print("Non int new x", newX)
+            newX = int(round(newX))
+            print("int new x", newX)
             newY = (yAgent  - (directionY)*scaleFactor)
-            newY = int(newY)
+            newY = int(round(newY))
             print("new/old x,y - ", xAgent,"-",newX,"y val: ", yAgent,"-",newY)
 
 
