@@ -45,7 +45,7 @@ def main():
 
     #print(test.grid)
     #print(test)
-    totalAgents = 10
+    totalAgents = 5
     agents = AgentClass.Agent(totalAgents,test.grid,rangeLength=3)
     #agents.x[0] = 5
     #agents.y[0] = 5
@@ -84,7 +84,7 @@ def main():
     for i in range(20):
         print("iteration: ", i)
         for agent in range(totalAgents): ##TODO make the list a permutation of each agent
-            #print("Agent number\n",agent)
+            print("Agent number\n",agent)
             agents.agentRange()
             xOld = agents.x[agent]
             yOld = agents.y[agent]
@@ -123,7 +123,8 @@ def main():
             agents.MoveAgent(agent, cellOverloaded)
             canvas.move(agentPlot[agent], (agents.x[agent]-xOld) *res/gridSize, (agents.y[agent]-yOld)*res/gridSize)
             tk.update()
-            #timer.sleep(0.5)
+            #timer.sleep(3)
+    print(agents.occupied)
     tk.update()
     print("All x",agents.x)        
     print("All y",agents.y)        
