@@ -118,6 +118,14 @@ class Agent:
             newX = int(round(newX))
             newY = (yAgent  - (directionY)*scaleFactor)
             newY = int(round(newY))
+
+            #Testing with moving towards no coverage...
+            # openCells = self.OpenCells()
+            # randLen = len(openCells)
+            # r = np.random.randint(0,randLen-1)
+            # coordinatePair = openCells[r]
+            # newX = coordinatePair[0]
+            # newY = coordinatePair[1]
             
 
 
@@ -195,7 +203,25 @@ class Agent:
         currentCoverage = len(coveredCells) / maximumCoverage
         return currentCoverage,coveredCells
 
+    def OpenCells(self):
+        coveredCells = []
+        for i in range(self.numberAgents):
+            xCoverage = self.status[i][0]
+            yCoverage = self.status[i][1]
+            coveregeLen = len(xCoverage)
+            for j in range(coveregeLen):
+                xTmp = xCoverage[j]
+                yTmp = yCoverage[j]
+                if (xTmp,yTmp) not in coveredCells:
+                    coveredCells.append((xTmp,yTmp))
+        
+        openCells = []
+        for i in range(self.gridSize):
+            for j in range(self.gridSize):
+                if (i,j) not in coveredCells:
+                    openCells.append((i,j))
 
+        return openCells
         
             
 
