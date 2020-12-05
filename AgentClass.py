@@ -62,7 +62,7 @@ class Agent:
                         tmpList.append(tmp1)
                         xxTmp.append(tmpX+1)
                         yyTmp.append(tmpY)
-                    if tmpX - 1 > 0 and self.grid[tmpX-1,tmpY] != 2: 
+                    if tmpX - 1 >= 0 and self.grid[tmpX-1,tmpY] != 2: 
                         tmp2 = (tmpX-1,tmpY,1)
                         tmpList.append(tmp2)
                         xxTmp.append(tmpX-1)
@@ -72,7 +72,7 @@ class Agent:
                         tmpList.append(tmp3)
                         xxTmp.append(tmpX)
                         yyTmp.append(tmpY+1)
-                    if tmpY - 1 > 0 and self.grid[tmpX,tmpY-1] != 2:
+                    if tmpY - 1 >= 0 and self.grid[tmpX,tmpY-1] != 2:
                         tmp4 = (tmpX,tmpY-1,1)
                         tmpList.append(tmp4)
                         xxTmp.append(tmpX)
@@ -185,7 +185,7 @@ class Agent:
         for i in range(self.numberAgents):
             xCoverage = self.status[i][0]
             yCoverage = self.status[i][1]
-            coveregeLen = len(xTmp)
+            coveregeLen = len(xCoverage)
             for j in range(coveregeLen):
                 xTmp = xCoverage[j]
                 yTmp = yCoverage[j]
@@ -193,7 +193,7 @@ class Agent:
                     coveredCells.append((xTmp,yTmp))
         
         currentCoverage = len(coveredCells) / maximumCoverage
-        return currentCoverage
+        return currentCoverage,coveredCells
 
 
         
