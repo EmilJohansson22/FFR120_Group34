@@ -5,14 +5,17 @@ class Agent:
     def __init__(self,numberAgents, grid, rangeLength = 2):
         self.grid = grid    
         self.numberAgents = numberAgents
+        
         self.x = np.zeros(numberAgents) #Each agent has a x and y coordinate in the grid
         self.y = np.zeros(numberAgents)
+
         self.status = []
         self.gridSize = np.size(self.grid[0])
+
         self.buildingLocations = np.where(self.grid == 2)
+
         self.occupied = np.full((self.gridSize, self.gridSize),-1)  #Lists if the grid-tile is occupied with the agents index, and if not the list has a -1 value in that place.
         self.rangeLength = rangeLength
-        print(self.grid)
 
     def GeneratePositions(self, updateOne = []):
         if updateOne:
@@ -174,4 +177,27 @@ class Agent:
                     #         distancesFromBuildings = np.delete(distancesFromBuildings,closestBuildings[0][chosenBuilding]) #Removes the tile from consideration
                     #         #print("Removing")
                 
+
+    def CheckCoverage(self):
+        maximumCoverage = self.gridSize**2 - len(self.buildingLocations[0])
+        
+        coveredCells = []
+        for i in range(self.numberAgents):
+            xCoverage = self.status[i][0]
+            yCoverage = self.status[i][1]
+            coveregeLen = len(xTmp)
+            for j in range(coveregeLen):
+                xTmp = xCoverage[j]
+                yTmp = yCoverage[j]
+                if (xTmp,yTmp) not in coveredCells:
+                    coveredCells.append((xTmp,yTmp))
+        
+        currentCoverage = len(coveredCells) / maximumCoverage
+        return currentCoverage
+
+
+        
+            
+
+
 

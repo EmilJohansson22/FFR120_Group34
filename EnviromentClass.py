@@ -21,14 +21,21 @@ class Enviroment:
 
 
     def DeterministicEnviroment(self):
-        #Fix different cells start with 9
+        #Fix different cells start with 10
         v1 = [0,1,2,3,6,7,8,9]
         v2 = [3,6]
+        
         self.grid[:,:] = self.road
+
         for i in range(self.gridSize):
             if i in v1:
                 self.grid[i,v2] = self.building
             if i in v2:
                 self.grid[i,v1] = self.building
+    
+    def NewEnviroment(self):
+        #This is the new enviroment
+        pass
 
+            
 

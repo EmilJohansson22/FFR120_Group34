@@ -20,9 +20,9 @@ def main():
 
 
     test = EnviromentClass.Enviroment(gridSize) 
-    #test.BuildEnviroment()
+    
     test.DeterministicEnviroment()
-
+    
     #Build Grid
     gridPlot = []
     ccolor = ['black','gray','red']
@@ -76,63 +76,63 @@ def main():
     
     tk.update()    
     timer.sleep(1)
-    
+    agents.CheckCoverage()
     threshold = 1
     #Test a couple of runs
 
-    #TODO When two agents are on the same spot an error occurs
-    for i in range(20):
-        print("iteration: ", i)
-        for agent in range(totalAgents): ##TODO make the list a permutation of each agent
-            print("Agent number\n",agent)
-            agents.agentRange()
-            xOld = agents.x[agent]
-            yOld = agents.y[agent]
-            currentStatus = agents.status[agent]
+    # #TODO When two agents are on the same spot an error occurs
+    # for i in range(20):
+    #     print("iteration: ", i)
+    #     for agent in range(totalAgents): ##TODO make the list a permutation of each agent
+    #         print("Agent number\n",agent)
+    #         agents.agentRange()
+    #         xOld = agents.x[agent]
+    #         yOld = agents.y[agent]
+    #         currentStatus = agents.status[agent]
             
-            if not currentStatus:
-                continue
-            xStatus = currentStatus[0]
+    #         if not currentStatus:
+    #             continue
+    #         xStatus = currentStatus[0]
 
-            yStatus = currentStatus[1]
-            decayStatus = currentStatus[2]
-            currentLen = len(xStatus)
+    #         yStatus = currentStatus[1]
+    #         decayStatus = currentStatus[2]
+    #         currentLen = len(xStatus)
             
-            cellOverloaded = []
-            for agent2 in range(totalAgents):
-                if agent2 != agent:
-                    compareStatus = agents.status[agent2]
-                    if not compareStatus:
-                        continue
-                    else:
-                        compareX = compareStatus[0]
+    #         cellOverloaded = []
+    #         for agent2 in range(totalAgents):
+    #             if agent2 != agent:
+    #                 compareStatus = agents.status[agent2]
+    #                 if not compareStatus:
+    #                     continue
+    #                 else:
+    #                     compareX = compareStatus[0]
 
-                        compareY = compareStatus[1]
-                        compareDecay = compareStatus[2]
-                        compareLen = len(compareX)
-                        agentFound = False
-                        for i in range(currentLen):
-                            if agentFound:
-                                break
-                            for j in range(compareLen):
-                                if xStatus[i] == compareX[j] and yStatus[i] == compareY[j] and compareDecay[j] + decayStatus[i] > threshold:
-                                    #The agent is not placed optimally
-                                    cellOverloaded.append(agent2)
-                                    agentFound = True
+    #                     compareY = compareStatus[1]
+    #                     compareDecay = compareStatus[2]
+    #                     compareLen = len(compareX)
+    #                     agentFound = False
+    #                     for i in range(currentLen):
+    #                         if agentFound:
+    #                             break
+    #                         for j in range(compareLen):
+    #                             if xStatus[i] == compareX[j] and yStatus[i] == compareY[j] and compareDecay[j] + decayStatus[i] > threshold:
+    #                                 #The agent is not placed optimally
+    #                                 cellOverloaded.append(agent2)
+    #                                 agentFound = True
             
-            agents.MoveAgent(agent, cellOverloaded)
-            canvas.move(agentPlot[agent], (agents.x[agent]-xOld) *res/gridSize, (agents.y[agent]-yOld)*res/gridSize)
-            tk.update()
-            timer.sleep(1)
-    print(agents.occupied)
-    tk.update()
-    print("All x",agents.x)        
-    print("All y",agents.y)        
+    #         agents.MoveAgent(agent, cellOverloaded)
+    #         canvas.move(agentPlot[agent], (agents.x[agent]-xOld) *res/gridSize, (agents.y[agent]-yOld)*res/gridSize)
+    #         tk.update()
+    #         timer.sleep(1)
+    # print(agents.occupied)
+    # tk.update()
+    # print("All x",agents.x)        
+    # print("All y",agents.y)        
 
-        #Cell overloaded contains coordinates from xStatus,yStatus in which the agent overlaps with another agent.
-        #Move the opposite direction of coordinates in cellOverloaded
-    print('Done')
-    Tk.mainloop(canvas)
+    #     #Cell overloaded contains coordinates from xStatus,yStatus in which the agent overlaps with another agent.
+    #     #Move the opposite direction of coordinates in cellOverloaded
+    # print('Done')
+    # Tk.mainloop(canvas)
             
                     
         
@@ -140,7 +140,7 @@ def main():
 
         
 
-    #I do a change
+    # #I do a change
     
 
 
