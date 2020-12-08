@@ -6,6 +6,7 @@ import time as timer
 from tkinter import *
 from tkinter import ttk
 
+
 def main():
 
     res = 500   # Animation resolution
@@ -20,8 +21,8 @@ def main():
 
 
     test = EnviromentClass.Enviroment(gridSize) 
-    
-    test.DeterministicEnviroment()
+    test.PlaceBuildings(1)
+    #test.DeterministicEnviroment()
     
     #Build Grid
     gridPlot = []
