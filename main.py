@@ -21,9 +21,8 @@ def main():
 
 
     test = EnviromentClass.Enviroment(gridSize) 
-    test.PlaceBuildings(1)
-    print(test.grid)
-    #test.DeterministicEnviroment()
+    #test.PlaceBuildings(1)
+    test.DeterministicEnviroment()
     
     #Build Grid
     gridPlot = []
@@ -45,8 +44,8 @@ def main():
 
 
 
-    totalAgents = 10
-    agents = AgentClass.Agent(totalAgents,test.grid,rangeLength=4)
+    totalAgents = 5
+    agents = AgentClass.Agent(totalAgents,test.grid,rangeLength=3)
 
 
     agents.GeneratePositions()
@@ -99,7 +98,7 @@ def main():
 
             if len(agents.status[agent]) == 0:
                 randomMove =True
-            elif len(agents.status[agent][0]) < 8: #TODO Change threshold
+            elif len(agents.status[agent][0]) < 12: #TODO Change threshold
                 randomMove = True
             else:
                 randomMove = False
@@ -183,12 +182,13 @@ def main():
 
     
     #print(agents.occupied)
-    
+    xOld = agents.x
+    yOld = agents.y
     agents.x = bestX
     agents.y = bestY
     agents.agentRange()
-
-    canvas.move(agentPlot[agent], (agents.x[agent]-xOld) *res/gridSize, (agents.y[agent]-yOld)*res/gridSize)
+    for agent in range(totalAgents):
+        canvas.move(agentPlot[agent], (agents.x[agent]-xOld[agent]) *res/gridSize, (agents.y[agent]-yOld[agent])*res/gridSize)
 
     currentCoverage,coveragePosition = agents.CheckCoverage()
     #print("Coverage after {} iterations at agent {}:  ".format(i,agent), currentCoverage)
@@ -202,7 +202,7 @@ def main():
                                                     (jGenerate)*res/gridSize,                           
                                                     (iGenerate+1)*res/gridSize,                               
                                                     (jGenerate+1)*res/gridSize,                               
-                                                    outline='orange', fill='orange' ))
+                                                    outline='orange', fill='blue' ))
 
     tk.update()
 
