@@ -191,14 +191,19 @@ class Agent:
         
         coveredCells = []
         for i in range(self.numberAgents):
-            xCoverage = self.status[i][0]
-            yCoverage = self.status[i][1]
-            coveregeLen = len(xCoverage)
-            for j in range(coveregeLen):
-                xTmp = xCoverage[j]
-                yTmp = yCoverage[j]
-                if (xTmp,yTmp) not in coveredCells:
-                    coveredCells.append((xTmp,yTmp))
+            if len(self.status[i]) > 0:    
+                xCoverage = self.status[i][0]
+                yCoverage = self.status[i][1]
+                coveregeLen = len(xCoverage)
+                for j in range(coveregeLen):
+                    xTmp = xCoverage[j]
+                    yTmp = yCoverage[j]
+                    if (xTmp,yTmp) not in coveredCells:
+                        coveredCells.append((xTmp,yTmp))
+            else:
+                continue
+        
+            
         
         currentCoverage = len(coveredCells) / maximumCoverage
         return currentCoverage,coveredCells
@@ -214,6 +219,7 @@ class Agent:
                 yTmp = yCoverage[j]
                 if (xTmp,yTmp) not in coveredCells:
                     coveredCells.append((xTmp,yTmp))
+                
         
         openCells = []
         for i in range(self.gridSize):

@@ -38,6 +38,7 @@ class Enviroment:
 
 
     def PlaceBuildings(self,numberOfBuildings): #Each building takes a lot of space, about a 7x7 square on the grid.
+        #self.grid[:,:] = self.road
         for i in range(numberOfBuildings):
             while True:
                 randX = np.random.randint(self.buildingSize+self.interiorSize - 1,self.gridSize-self.buildingSize-self.interiorSize+1,1)
@@ -72,5 +73,6 @@ class Enviroment:
                             else:
                                 self.overlapGrid[currentX,currentY] = 1
                     break
+        #self.buildingLocations = np.where(self.grid == 2)
 
 

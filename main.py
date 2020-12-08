@@ -22,6 +22,7 @@ def main():
 
     test = EnviromentClass.Enviroment(gridSize) 
     test.PlaceBuildings(1)
+    print(test.grid)
     #test.DeterministicEnviroment()
     
     #Build Grid
@@ -57,6 +58,7 @@ def main():
     agents.GeneratePositions()
     agents.agentRange()
     currentCoverage,coveragePosition = agents.CheckCoverage()
+    print("CoveragePosition \n ", coveragePosition)
     print("Starting coverage with random initialized positions: ", currentCoverage)
     # print(agents.status)
     # print("A0\n",agents.status[0]) #Gets agent 0 status with x, y and some decay value...
@@ -91,12 +93,16 @@ def main():
     agents.CheckCoverage()
     threshold = 1
     #Test a couple of runs
-
+    print("loc: ", agents.x)
+    print("loc: ", agents.y)
+    agents.agentRange()
+    print("\n", agents.status[0][0])
+    print("\n", agents.status[0][1])
     #TODO When two agents are on the same spot an error occurs
     for iteration in range(20):
-        print("iteration: ", i)
+        print("iteration: ", iteration)
         for agent in range(totalAgents): ##TODO make the list a permutation of each agent
-            print("Agent number\n",agent)
+            #print("Agent number\n",agent)
             agents.agentRange()
             xOld = agents.x[agent]
             yOld = agents.y[agent]
@@ -136,7 +142,7 @@ def main():
             canvas.move(agentPlot[agent], (agents.x[agent]-xOld) *res/gridSize, (agents.y[agent]-yOld)*res/gridSize)
 
             currentCoverage,coveragePosition = agents.CheckCoverage()
-            print("Coverage after {} iterations at agent {}:  ".format(i,agent), currentCoverage)
+            #print("Coverage after {} iterations at agent {}:  ".format(i,agent), currentCoverage)
             for c in coveragePlot:
                 canvas.delete(c)
             coveragePlot = []
@@ -151,10 +157,10 @@ def main():
 
             tk.update()
             timer.sleep(1)
-    print(agents.occupied)
+    #print(agents.occupied)
     tk.update()
-    print("All x",agents.x)        
-    print("All y",agents.y)        
+    #print("All x",agents.x)        
+    #print("All y",agents.y)        
 
     #Cell overloaded contains coordinates from xStatus,yStatus in which the agent overlaps with another agent.
     #Move the opposite direction of coordinates in cellOverloaded
