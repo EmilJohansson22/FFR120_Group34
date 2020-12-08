@@ -45,19 +45,14 @@ def main():
 
 
 
-    #print(test.grid)
-    #print(test)
-    totalAgents = 5
-    agents = AgentClass.Agent(totalAgents,test.grid,rangeLength=3)
-    #agents.x[0] = 5
-    #agents.y[0] = 5
-    #agents.x[1] = 6
-    #agents.y[1] = 6
-    #agents.x[2] = 3
-    #agents.y[2] = 3
+    totalAgents = 10
+    agents = AgentClass.Agent(totalAgents,test.grid,rangeLength=4)
+
+
     agents.GeneratePositions()
     agents.agentRange()
     currentCoverage,coveragePosition = agents.CheckCoverage()
+
     print("CoveragePosition \n ", coveragePosition)
     print("Starting coverage with random initialized positions: ", currentCoverage)
     # print(agents.status)
@@ -90,24 +85,48 @@ def main():
     print("coveragePlot : ", coveragePlot)
     tk.update()    
     timer.sleep(1)
-    agents.CheckCoverage()
+    bestCoverage = currentCoverage
     threshold = 1
     #Test a couple of runs
-    print("loc: ", agents.x)
-    print("loc: ", agents.y)
-    agents.agentRange()
-    print("\n", agents.status[0][0])
-    print("\n", agents.status[0][1])
     #TODO When two agents are on the same spot an error occurs
-    for iteration in range(20):
+    for iteration in range(50):
         print("iteration: ", iteration)
         for agent in range(totalAgents): ##TODO make the list a permutation of each agent
             #print("Agent number\n",agent)
             agents.agentRange()
             xOld = agents.x[agent]
             yOld = agents.y[agent]
+
+            if len(agents.status[agent]) == 0:
+                randomMove =True
+            elif len(agents.status[agent][0]) < 8: #TODO Change threshold
+                randomMove = True
+            else:
+                randomMove = False
+
+            if randomMove:
+                print('random move')
+                agents.MoveAgent2(agent)
+                agents.agentRange()
+                #canvas.move(agentPlot[agent], (agents.x[agent]-xOld) *res/gridSize, (agents.y[agent]-yOld)*res/gridSize)
+
+                #currentCoverage,coveragePosition = agents.CheckCoverage()
+                #print("Coverage after {} iterations at agent {}:  ".format(i,agent), currentCoverage)
+                # for c in coveragePlot:
+                #     canvas.delete(c)
+                # coveragePlot = []
+                # for iGenerate in range(gridSize):     # Generate animated particles in Canvas 
+                #     for jGenerate in range(gridSize):     # Generate animated particles in Canvas 
+                #         if (iGenerate,jGenerate) in coveragePosition:
+                #             coveragePlot.append( canvas.create_rectangle( (iGenerate)*res/gridSize,                                           
+                #                                                 (jGenerate)*res/gridSize,                           
+                #                                                 (iGenerate+1)*res/gridSize,                               
+                #                                                 (jGenerate+1)*res/gridSize,                               
+                #                                                 outline='orange', fill='orange' ))
+
+                #tk.update()
+                
             currentStatus = agents.status[agent]
-            
             if not currentStatus:
                 continue
             xStatus = currentStatus[0]
@@ -156,9 +175,37 @@ def main():
                                                             outline='orange', fill='orange' ))
 
             tk.update()
-            timer.sleep(1)
+            if currentCoverage > bestCoverage:
+                bestCoverage = currentCoverage
+                bestX = agents.x.copy()
+                bestY = agents.y.copy()
+            #timer.sleep(1)
+
+    
     #print(agents.occupied)
+    
+    agents.x = bestX
+    agents.y = bestY
+    agents.agentRange()
+
+    canvas.move(agentPlot[agent], (agents.x[agent]-xOld) *res/gridSize, (agents.y[agent]-yOld)*res/gridSize)
+
+    currentCoverage,coveragePosition = agents.CheckCoverage()
+    #print("Coverage after {} iterations at agent {}:  ".format(i,agent), currentCoverage)
+    for c in coveragePlot:
+        canvas.delete(c)
+    coveragePlot = []
+    for iGenerate in range(gridSize):     # Generate animated particles in Canvas 
+        for jGenerate in range(gridSize):     # Generate animated particles in Canvas 
+            if (iGenerate,jGenerate) in coveragePosition:
+                coveragePlot.append( canvas.create_rectangle( (iGenerate)*res/gridSize,                                           
+                                                    (jGenerate)*res/gridSize,                           
+                                                    (iGenerate+1)*res/gridSize,                               
+                                                    (jGenerate+1)*res/gridSize,                               
+                                                    outline='orange', fill='orange' ))
+
     tk.update()
+
     #print("All x",agents.x)        
     #print("All y",agents.y)        
 
