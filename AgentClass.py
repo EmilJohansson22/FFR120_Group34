@@ -44,11 +44,47 @@ class Agent:
     
     def agentRange(self):
         self.status = []
+        for agent in range(self.numberAgents):
+            x = [self.x[agent]]
+            y = [self.y[agent]]
+            tmpList = []
+            tmpList.append((x[0],y[0]))
+            for i in range(self.rangeLength):
+                reach = i + 1
+                neighbourhood = len(x)
+                for iNeighbour in range(neighbourhood):
+                    #print("inehg ",iNeighbour )
+                    xTmp = int(x[iNeighbour])
+                    yTmp = int(y[iNeighbour])
+                    #kolla neighbours
+                    if (xTmp+1,yTmp) not in tmpList and xTmp+1 < np.size(self.grid[0]) and self.grid[xTmp+1,yTmp] != 2 :
+                        tmpList.append((xTmp+1,yTmp))
+                        x.append(xTmp+1)
+                        y.append(yTmp)
+                    if (xTmp-1,yTmp) not in tmpList and self.grid[xTmp-1,yTmp] != 2 and xTmp-1 >= 0:
+                        tmpList.append((xTmp-1,yTmp))
+                        x.append(xTmp-1)
+                        y.append(yTmp)
+                    if (xTmp,yTmp-1) not in tmpList and self.grid[xTmp,yTmp-1] != 2 and yTmp-1 >= 0:
+                        tmpList.append((xTmp,yTmp-1))
+                        x.append(xTmp)
+                        y.append(yTmp-1)
+                    if (xTmp,yTmp+1) not in tmpList and yTmp+1 < np.size(self.grid[0]) and self.grid[xTmp,yTmp+1] != 2:
+                        tmpList.append((xTmp,yTmp+1))
+                        x.append(xTmp)
+                        y.append(yTmp+1)
+            tmpList.pop(0)
+            tmpList = list(zip(*tmpList))
+            self.status.append(tmpList)
+
+
+    def TmpagentRange(self):
+        self.status = []
         ##TODO the origianl coordinate for the agent is not in agentRange - Status list
         for agent in range(self.numberAgents):
             xx = [self.x[agent]]
             yy = [self.y[agent]]
-            #Spread to neighbors but be careful of boundaries in grid "two step neighbor"
+
             tmpList = []
             for reach in range(self.rangeLength):
                 xxTmp = []
@@ -58,22 +94,22 @@ class Agent:
                     tmpX = int(xx[iNeigbour])
                     tmpY = int(yy[iNeigbour])
                     if tmpX + 1 < np.size(self.grid[0]) and self.grid[tmpX+1,tmpY] != 2:
-                        tmp1 = (tmpX+1,tmpY,1) #TODO Third coorinate should decay with each step of reach. 
+                        tmp1 = (tmpX+1,tmpY,reach+1) #TODO Third coorinate should decay with each step of reach. 
                         tmpList.append(tmp1)
                         xxTmp.append(tmpX+1)
                         yyTmp.append(tmpY)
                     if tmpX - 1 >= 0 and self.grid[tmpX-1,tmpY] != 2: 
-                        tmp2 = (tmpX-1,tmpY,1)
+                        tmp2 = (tmpX-1,tmpY,reach+1)
                         tmpList.append(tmp2)
                         xxTmp.append(tmpX-1)
                         yyTmp.append(tmpY)
                     if tmpY + 1 < np.size(self.grid[0]) and self.grid[tmpX,tmpY+1] != 2:
-                        tmp3 = (tmpX,tmpY+1,1)
+                        tmp3 = (tmpX,tmpY+1,reach+1)
                         tmpList.append(tmp3)
                         xxTmp.append(tmpX)
                         yyTmp.append(tmpY+1)
                     if tmpY - 1 >= 0 and self.grid[tmpX,tmpY-1] != 2:
-                        tmp4 = (tmpX,tmpY-1,1)
+                        tmp4 = (tmpX,tmpY-1,reach+1)
                         tmpList.append(tmp4)
                         xxTmp.append(tmpX)
                         yyTmp.append(tmpY-1)
@@ -82,6 +118,80 @@ class Agent:
         
             tmpList = list(zip(*tmpList))
             self.status.append(tmpList)
+
+
+    def MoveOverlap(self,agent, moveOverlap2, currentCoverage):
+        #Move overlap contians cells which have overlap... 
+        # move away from overlap but think about the third argument staing range thing. far away in range maybe skip move?
+        # Use for later stages in the optimization if everything works well.
+
+        if not moveOverlap2 or currentCoverage == 1:
+            return
+        else:
+            xAgent = int(self.x[agent]) #Needs to be forced to an integer, otherwise the program does not identify 3.0 as 3 for some reason.
+            yAgent = int(self.y[agent]) #move backwards from first agent found that has overlap Fix so it moves away from average of all overlapping agents or something                
+            
+            directionX = 0
+            directionY = 0
+            totalDistance = 0
+            for allOverlap in moveOverlap2:
+            #for abc in range(1):
+                xMove = allOverlap[0]
+                yMove = allOverlap[1]
+                overlapRangeMove = allOverlap[2]
+                overlapRangeAgent = allOverlap[3]
+                
+                weight = 1/(overlapRangeAgent+overlapRangeMove)
+
+                distance = np.sqrt((xMove - xAgent)**2 + (yMove - yAgent)**2)
+                if distance != 0:
+                    directionX += weight*(xMove - xAgent) / distance #Unit vector
+                    directionY += weight*(yMove - yAgent) / distance
+                    #totalDistance  += distance
+                else:
+                    #self.GeneratePositions(updateOne = [agent]) #Randomly move the overlapping agent to a new position
+                    continue #Skips this iteration and goes back to for allOverlap in cellOverloaded.
+        
+            totalDistance = np.sqrt(directionX**2 + directionY**2)
+            print("agent {} overlap distance".format(agent))
+            print(totalDistance)
+            if totalDistance < 0.2:
+                totalDistance = 10000
+            directionX = directionX/totalDistance
+            directionY = directionY/totalDistance
+            scaleFactor = 1
+            newX = (xAgent  - (directionX)*scaleFactor)
+            newX = int(round(newX))
+            newY = (yAgent  - (directionY)*scaleFactor)
+            newY = int(round(newY))
+
+            if newX == xAgent and newY == yAgent:
+                return
+
+            if newX // self.gridSize == 0 and newY // self.gridSize == 0 and self.grid[newX][newY] == 2 and self.occupied[newX][newY] == -1: 
+                self.occupied[xAgent][yAgent] = -1
+                self.x[agent]  = newX
+                self.y[agent]  = newY
+                self.occupied[newX][newY] = agent
+            else:
+                distancesFromBuildings = np.sqrt((newX - self.buildingLocations[0][:])**2 + (newY - self.buildingLocations[1][:])**2) #Lists the distances to the closest tile with a building on it compared to the suggest new point
+                while True:
+                    closestBuildings = np.where((distancesFromBuildings == min(distancesFromBuildings)))
+                    chosenBuilding = np.random.randint(len(closestBuildings))
+                    newX = self.buildingLocations[0][closestBuildings[0][chosenBuilding]]
+                    newY = self.buildingLocations[1][closestBuildings[0][chosenBuilding]]
+                    if self.occupied[newX][newY] == -1:
+                        self.occupied[xAgent][yAgent] = -1 #Makes the old tile usuable for other agents
+                        self.x[agent] = newX
+                        self.y[agent] = newY
+                        self.occupied[newX][newY] = agent #Updates the building occupancy
+                        #print("Found")
+                        break
+                    else:
+                        distancesFromBuildings = np.delete(distancesFromBuildings,closestBuildings[0][chosenBuilding]) #Removes the tile from consideration
+                        if len(distancesFromBuildings) == 0:
+                            break
+
 
     def MoveAgent2(self,agent):
         xAgent = int(self.x[agent]) #Needs to be forced to an integer, otherwise the program does not identify 3.0 as 3 for some reason.
@@ -118,13 +228,18 @@ class Agent:
 
 
     def MoveAgent(self,agent, cellOveloaded):
+        xAgent = int(self.x[agent]) #Needs to be forced to an integer, otherwise the program does not identify 3.0 as 3 for some reason.
+        yAgent = int(self.y[agent]) #move backwards from first agent found that has overlap Fix so it moves away from average of all overlapping agents or something                
+        agentCoverage = len(self.status[agent][0])
+        if agentCoverage > 0.65*2*self.rangeLength*(self.rangeLength+1):
+            #Optimal position don't move it
+            print("agent {} is optimally placed at position ({},{})".format(agent,xAgent,yAgent))
+            return
+        self.occupied[xAgent][yAgent] = agent
 
         if not cellOveloaded:
             return
         else:
-            xAgent = int(self.x[agent]) #Needs to be forced to an integer, otherwise the program does not identify 3.0 as 3 for some reason.
-            yAgent = int(self.y[agent]) #move backwards from first agent found that has overlap Fix so it moves away from average of all overlapping agents or something                
-            
             directionX = 0
             directionY = 0
             totalDistance = 0
@@ -173,7 +288,6 @@ class Agent:
             #     pass #Skips this iteration and goes back to for allOverlap in cellOverloaded.
                 
 
-        
         
 
             if newX // self.gridSize == 0 and newY // self.gridSize == 0 and self.grid[newX][newY] == 2 and self.occupied[newX][newY] == -1: 

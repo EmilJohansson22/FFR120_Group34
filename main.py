@@ -17,12 +17,12 @@ def main():
     canvas = Canvas(tk, bd=2)            # Generate animation window 
     tk.attributes('-topmost', 0)
     canvas.place(x=res/20, y=res/20, height= res, width= res)
-    gridSize = 10 #Has to be 10 as of now.
+    gridSize = 50 #Has to be 10 as of now.
 
 
     test = EnviromentClass.Enviroment(gridSize) 
-    #test.PlaceBuildings(1)
-    test.DeterministicEnviroment()
+    test.PlaceBuildings(10)
+    #test.DeterministicEnviroment()
     
     #Build Grid
     gridPlot = []
@@ -44,8 +44,9 @@ def main():
 
 
 
-    totalAgents = 5
-    agents = AgentClass.Agent(totalAgents,test.grid,rangeLength=3)
+    totalAgents = 20
+    rangeLength = 12
+    agents = AgentClass.Agent(totalAgents,test.grid,rangeLength)
 
 
     agents.GeneratePositions()
@@ -85,6 +86,8 @@ def main():
     tk.update()    
     timer.sleep(1)
     bestCoverage = currentCoverage
+    bestX = agents.x.copy()
+    bestY = agents.y.copy()
     threshold = 1
     #Test a couple of runs
     #TODO When two agents are on the same spot an error occurs
@@ -96,9 +99,10 @@ def main():
             xOld = agents.x[agent]
             yOld = agents.y[agent]
 
+
             if len(agents.status[agent]) == 0:
                 randomMove =True
-            elif len(agents.status[agent][0]) < 12: #TODO Change threshold
+            elif len(agents.status[agent][0]) < 0.25*2*rangeLength*(rangeLength+1): #TODO Change threshold
                 randomMove = True
             else:
                 randomMove = False
@@ -107,23 +111,6 @@ def main():
                 print('random move')
                 agents.MoveAgent2(agent)
                 agents.agentRange()
-                #canvas.move(agentPlot[agent], (agents.x[agent]-xOld) *res/gridSize, (agents.y[agent]-yOld)*res/gridSize)
-
-                #currentCoverage,coveragePosition = agents.CheckCoverage()
-                #print("Coverage after {} iterations at agent {}:  ".format(i,agent), currentCoverage)
-                # for c in coveragePlot:
-                #     canvas.delete(c)
-                # coveragePlot = []
-                # for iGenerate in range(gridSize):     # Generate animated particles in Canvas 
-                #     for jGenerate in range(gridSize):     # Generate animated particles in Canvas 
-                #         if (iGenerate,jGenerate) in coveragePosition:
-                #             coveragePlot.append( canvas.create_rectangle( (iGenerate)*res/gridSize,                                           
-                #                                                 (jGenerate)*res/gridSize,                           
-                #                                                 (iGenerate+1)*res/gridSize,                               
-                #                                                 (jGenerate+1)*res/gridSize,                               
-                #                                                 outline='orange', fill='orange' ))
-
-                #tk.update()
                 
             currentStatus = agents.status[agent]
             if not currentStatus:
@@ -131,10 +118,12 @@ def main():
             xStatus = currentStatus[0]
 
             yStatus = currentStatus[1]
-            decayStatus = currentStatus[2]
+            #decayStatus = currentStatus[2]
+            decayStatus = 2
             currentLen = len(xStatus)
             
             cellOverloaded = []
+            moveOverlap2 = []
             for agent2 in range(totalAgents):
                 if agent2 != agent:
                     compareStatus = agents.status[agent2]
@@ -142,21 +131,29 @@ def main():
                         continue
                     else:
                         compareX = compareStatus[0]
-
                         compareY = compareStatus[1]
-                        compareDecay = compareStatus[2]
+                        #compareDecay = compareStatus[2]
+                        compareDecay = 2
                         compareLen = len(compareX)
                         agentFound = False
                         for i in range(currentLen):
                             if agentFound:
                                 break
                             for j in range(compareLen):
-                                if xStatus[i] == compareX[j] and yStatus[i] == compareY[j] and compareDecay[j] + decayStatus[i] > threshold:
+                                if xStatus[i] == compareX[j] and yStatus[i] == compareY[j] and compareDecay > threshold and decayStatus > threshold:
+                                    # print("Status size error divide by zero")
+                                    # print(decayStatus[i])
+                                    # print(compareDecay[j])
                                     #The agent is not placed optimally
-                                    cellOverloaded.append(agent2)
-                                    agentFound = True
+                                    if agent2 not in cellOverloaded:
+                                        cellOverloaded.append(agent2)
+                                    #moveOverlap2.append((xStatus[i],yStatus[i],compareDecay[j],decayStatus[i]))
+                                    
+                                    #agentFound = True
             
             agents.MoveAgent(agent, cellOverloaded)
+            #moveOverlap2 = list(zip(*moveOverlap2))
+            #agents.MoveOverlap(agent, moveOverlap2, currentCoverage)
             canvas.move(agentPlot[agent], (agents.x[agent]-xOld) *res/gridSize, (agents.y[agent]-yOld)*res/gridSize)
 
             currentCoverage,coveragePosition = agents.CheckCoverage()
@@ -187,6 +184,7 @@ def main():
     agents.x = bestX
     agents.y = bestY
     agents.agentRange()
+    print(cellOverloaded)
     for agent in range(totalAgents):
         canvas.move(agentPlot[agent], (agents.x[agent]-xOld[agent]) *res/gridSize, (agents.y[agent]-yOld[agent])*res/gridSize)
 
