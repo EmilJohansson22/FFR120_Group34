@@ -86,6 +86,7 @@ def main():
     tk.update()    
     timer.sleep(1)
     bestCoverage = currentCoverage
+    previousCoverage = currentCoverage
     bestX = agents.x.copy()
     bestY = agents.y.copy()
     threshold = 1
@@ -102,7 +103,7 @@ def main():
 
             if len(agents.status[agent]) == 0:
                 randomMove =True
-            elif len(agents.status[agent][0]) < 0.25*2*rangeLength*(rangeLength+1): #TODO Change threshold
+            elif len(agents.status[agent][0]) < 9:#0.25*2*rangeLength*(rangeLength+1): #TODO Change threshold
                 randomMove = True
             else:
                 randomMove = False
@@ -153,10 +154,14 @@ def main():
             
             #agents.MoveAgent(agent, cellOverloaded)
             moveOverlap2 = list(zip(*moveOverlap2))
-            agents.MoveOverlap(agent, moveOverlap2)
+            agents.MoveOverlap(agent, cellOverloaded)
             
 
             currentCoverage,coveragePosition = agents.CheckCoverage()
+            if currentCoverage < previousCoverage:
+                #agents.Moveold(agent,(xOld,yOld))
+                pass
+            previousCoverage = currentCoverage
             #print("Coverage after {} iterations at agent {}:  ".format(i,agent), currentCoverage)
             for c in coveragePlot:
                 canvas.delete(c)
@@ -170,8 +175,21 @@ def main():
                                                             (jGenerate+1)*res/gridSize,                               
                                                             outline='orange', fill='orange' ))
 
-            canvas.move(agentPlot[agent], (agents.x[agent]-xOld) *res/gridSize, (agents.y[agent]-yOld)*res/gridSize)
+            for c in agentPlot:
+                canvas.delete(c)
+                agentPlot = []
+            for j in range(totalAgents):     # Generate animated particles in Canvas 
+                xx = agents.x[j]
+                yy = agents.y[j]
+                agentPlot.append(canvas.create_oval((xx)*res/gridSize,                                           
+                                                (yy)*res/gridSize,                           
+                                                (xx+1)*res/gridSize,                               
+                                                (yy+1)*res/gridSize,                               
+                                                outline=ccolor[2], fill=ccolor[2]))
+
+            #canvas.move(agentPlot[agent], (agents.x[agent]-xOld) *res/gridSize, (agents.y[agent]-yOld)*res/gridSize)
             tk.update()
+
             if currentCoverage > bestCoverage:
                 bestCoverage = currentCoverage
                 bestX = agents.x.copy()
