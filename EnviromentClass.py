@@ -1,7 +1,7 @@
 import numpy as np
 import random
 # Enviroment Class.
-
+# TODO: Implement the node based grid, where the building blocks can only be placed in predefined 'nodes', based on the gridsize.
 
 class Enviroment:
     def __init__(self, gridSize):
@@ -144,51 +144,4 @@ class Enviroment:
                             break
                     break    
 
-    def PlaceLongBuilding(self, cutOff, coordX, coordY):
-        
-
-#numberOfIterations = 0
-        #while True:
-            #numberOfIterations = numberOfIterations + 1
-            #randX = np.random.randint(self.buildingSize+self.interiorSize - 1,
-             #                      self.gridSize-self.buildingSize-self.interiorSize+1, 1)
-            #randY = np.random.randint(self.buildingSize+self.interiorSize - 1,
-            #                         self.gridSize-self.buildingSize-self.interiorSize+1, 1)
-            #if self.overlapGrid[randX, randY] == 0 and numberOfIterations < cutOff:
-            #    for j in range(self.buildingSize*2 + self.interiorSize):
-            #        for k in range(self.buildingSize*2 + self.interiorSize):
-            #            if self.grid[randX - self.buildingSize + j - 1, randY - self.buildingSize+k-1] == 0 or self.grid[randX - self.buildingSize + j - 1, randY - self.buildingSize+k-1] == 2:
-            #                self.grid[randX - self.buildingSize + j - 1,
-            #                          randY - self.buildingSize+k-1] = self.building
-
-#                for j in range(self.interiorSize):
-#                    for k in range(self.interiorSize):
-#                        self.grid[randX + j - 1, randY + k - 1] = self.inside
-#
-#                for j in range(self.buildingSize*2 + self.interiorSize + 2):
-#                    for k in range(self.buildingSize*2 + self.interiorSize + 2):
-#                        if self.grid[randX - self.buildingSize + j - 2, randY - self.buildingSize+k-2] == 0:
-#                            self.grid[randX - self.buildingSize + j - 2,
-#                                      randY - self.buildingSize+k-2] = self.road
-#
-#                for j in range(self.buildingSize*4 + 1*self.interiorSize + 2*self.roadSize + (self.interiorSize-1)*2):
-#                    # hardcoded for the case where the interior is 3x3
-#                    for k in range(self.buildingSize*4 + 1*self.interiorSize + 2*self.roadSize + (self.interiorSize-1)*2):
-#                        currentX = int(
-#                            randX - 2*self.buildingSize - self.roadSize - 2*(self.interiorSize-1)/2 + (j-1))
-#                        currentY = int(
-#                            randY - 2*self.buildingSize - self.roadSize - 2*(self.interiorSize-1)/2 + (k-1))
-#                        if self.gridSize - 1 < currentX:
-#                            continue
-#                        elif currentX < -self.gridSize + 1:
-#                            continue
-#                        elif currentY > self.gridSize - 1:
-#                            continue
-#                        elif -self.gridSize + 1 > currentY:
- #                           continue
-  #                      else:
-   #                         self.overlapGrid[currentX, currentY] = 1
-    #            break
-     #       elif numberOfIterations >= cutOff:
-      #          print('Could not place building:', i)
-       #         break """
+    # def PlaceLongBuilding(self, cutOff, coordX, coordY):
