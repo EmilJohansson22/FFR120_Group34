@@ -93,6 +93,7 @@ def main():
     #Test a couple of runs
     #TODO When two agents are on the same spot an error occurs
     for iteration in range(50):
+        agents.resetCounter()
         print("iteration: ", iteration)
         for agent in range(totalAgents): ##TODO make the list a permutation of each agent
             #print("Agent number\n",agent)
@@ -102,9 +103,9 @@ def main():
 
 
             if len(agents.status[agent]) == 0:
-                randomMove =True
+                randomMove = False
             elif len(agents.status[agent][0]) < 9:#0.25*2*rangeLength*(rangeLength+1): #TODO Change threshold
-                randomMove = True
+                randomMove = False
             else:
                 randomMove = False
 
@@ -162,6 +163,7 @@ def main():
                 #agents.Moveold(agent,(xOld,yOld))
                 pass
             previousCoverage = currentCoverage
+            coveragePosition,coveredCells = agents.OpenReachable()
             #print("Coverage after {} iterations at agent {}:  ".format(i,agent), currentCoverage)
             for c in coveragePlot:
                 canvas.delete(c)
