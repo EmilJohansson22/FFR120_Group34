@@ -1,7 +1,7 @@
 import numpy as np
 import random
 # Enviroment Class.
-
+# TODO: Implement the node based grid, where the building blocks can only be placed in predefined 'nodes', based on the gridsize.
 
 class Enviroment:
     def __init__(self, gridSize):
