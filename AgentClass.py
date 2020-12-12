@@ -361,26 +361,6 @@ class Agent:
                 self.x[agent]  = newX
                 self.y[agent]  = newY
                 self.occupied[newX][newY] = agent
-            # else:
-            #     distancesFromBuildings = np.sqrt((newX**2 - self.buildingLocations[0][:])**2 + (newY**2 - self.buildingLocations[1][:])**2) #Lists the distances to the closest tile with a building on it compared to the suggest new point
-            #     while True:
-            #         closestBuilding = np.argmax(distancesFromBuildings)
-            #         xClosest = self.buildingLocations[0][closestBuilding]
-            #         yClosest = self.buildingLocations[1][closestBuilding]
-            #         tmpRange = self.TmpAgentRange((xClosest,yClosest))
-            #         if tmpRange not in coveredCells and self.occupied[xClosest,yClosest] == -1:
-            #             newX = xClosest
-            #             newY = yClosest
-            #             self.occupied[xAgent][yAgent] = -1
-            #             self.x[agent]  = newX
-            #             self.y[agent]  = newY
-            #             self.occupied[newX][newY] = agent
-            #             break
-            #         else:
-            #             np.delete(distancesFromBuildings,closestBuilding)
-            #             if len(distancesFromBuildings) == 0:
-            #                 break
-
             else:
                 tmpCorners = self.corners.copy()
                 #distancesFromBuildings = np.sqrt((newX**2 - self.buildingLocations[0][:])**2 + (newY**2 - self.buildingLocations[1][:])**2) #Lists the distances to the closest tile with a building on it compared to the suggest new point
@@ -399,20 +379,37 @@ class Agent:
                         self.y[agent] = TmpnewY
                         self.occupied[TmpnewX][TmpnewY] = agent #Updates the building occupancy
                         #print("Found")
-                        break
+                        return
                     else:
                         #distancesFromBuildings = np.delete(distancesFromBuildings,closestBuildings[0][chosenBuilding]) #Removes the tile from consideration
                         try:
                             tmpCorners = [item for item in tmpCorners if item not in [distancesFromBuildings]]
-                            print('tried')
-                            print(tmpCorners)
                         except:
+                            pass
                             #print("corners",tmpCorners)
-                            print("distance",distancesFromBuildings)
-
-
-                        if len(distancesFromBuildings) == 0:
+                            #print("distance",distancesFromBuildings)
+                        if len(tmpCorners) == 0:
                             break
+                #distancesFromBuildings = np.sqrt((newX**2 - self.buildingLocations[0][:])**2 + (newY**2 - self.buildingLocations[1][:])**2) #Lists the distances to the closest tile with a building on it compared to the suggest new point
+            while True:
+                closestBuildings = np.where((distancesFromBuildings == min(distancesFromBuildings)))
+                chosenBuilding = np.random.randint(len(closestBuildings))
+                TmpnewX = self.buildingLocations[0][closestBuildings[0][chosenBuilding]]
+                TmpnewY = self.buildingLocations[1][closestBuildings[0][chosenBuilding]]
+                #tmpCoverage = self.TmpAgentRange((TmpnewX,TmpnewY))
+                if self.occupied[TmpnewX][TmpnewY] == -1:
+                    self.occupied[xAgent][yAgent] = -1 #Makes the old tile usuable for other agents
+                    self.x[agent] = TmpnewX
+                    self.y[agent] = TmpnewY
+                    self.occupied[TmpnewX][TmpnewY] = agent #Updates the building occupancy
+                    #print("Found")
+                    break
+                else:
+                    distancesFromBuildings = np.delete(distancesFromBuildings,closestBuildings[0][chosenBuilding]) #Removes the tile from consideration
+                    if len(distancesFromBuildings) == 0:
+                        break
+
+            
     
     def Moveold(self,agent,oldCoordinates):
         xAgent = int(self.x[agent])
