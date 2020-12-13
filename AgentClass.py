@@ -275,7 +275,7 @@ class Agent:
         yAgent = int(self.y[agent]) #move backwards from first agent found that has overlap Fix so it moves away from average of all overlapping agents or something                
         
         #moveOverlap2 = list(zip(*moveOverlap2))
-        coverageBefore, tmpDontUse = self.CheckCoverage()
+        coverageBefore, tmpDontUse1, tmpDontUse2 = self.CheckCoverage()
         agentCoverage = len(self.status[agent][0])
         if agentCoverage > 0.7*2*self.rangeLength*(self.rangeLength+1):
             #Optimal position don't move it
@@ -364,6 +364,7 @@ class Agent:
             else:
                 tmpCorners = self.corners.copy()
                 #distancesFromBuildings = np.sqrt((newX**2 - self.buildingLocations[0][:])**2 + (newY**2 - self.buildingLocations[1][:])**2) #Lists the distances to the closest tile with a building on it compared to the suggest new point
+                counter = 0
                 while True:
                     distancesFromBuildings = self.Get_shortest_distance((newX,newY), tmpCorners)
                     # closestBuildings = np.where((distancesFromBuildings == min(distancesFromBuildings)))
@@ -376,7 +377,7 @@ class Agent:
                     if self.occupied[TmpnewX][TmpnewY] == -1:
                         self.x[agent] = TmpnewX
                         self.y[agent] = TmpnewY
-                        coverageAfter, tmpDontUse = self.CheckCoverage()
+                        coverageAfter, tmpDontUse1, tmpDontUse2 = self.CheckCoverage()
                         if coverageAfter > 0.9*coverageBefore:
                             self.occupied[xAgent][yAgent] = -1 #Makes the old tile usuable for other agents
                             self.occupied[TmpnewX][TmpnewY] = agent #Updates the building occupancy
@@ -388,11 +389,12 @@ class Agent:
                         #distancesFromBuildings = np.delete(distancesFromBuildings,closestBuildings[0][chosenBuilding]) #Removes the tile from consideration
                         try:
                             tmpCorners = [item for item in tmpCorners if item not in [distancesFromBuildings]]
+                            counter += 1
                         except:
                             pass
                             #print("corners",tmpCorners)
                             #print("distance",distancesFromBuildings)
-                        if len(tmpCorners) == 0:
+                        if len(tmpCorners) == 0 or counter > 10:
                             break
                 #distancesFromBuildings = np.sqrt((newX**2 - self.buildingLocations[0][:])**2 + (newY**2 - self.buildingLocations[1][:])**2) #Lists the distances to the closest tile with a building on it compared to the suggest new point
             # while True:
@@ -554,6 +556,7 @@ class Agent:
         maximumCoverage = self.gridSize**2 - len(self.buildingLocations[0])
         
         coveredCells = []
+        overlap = 0
         for i in range(self.numberAgents):
             if len(self.status[i]) > 0:    
                 xCoverage = self.status[i][0]
@@ -564,13 +567,15 @@ class Agent:
                     yTmp = yCoverage[j]
                     if (xTmp,yTmp) not in coveredCells:
                         coveredCells.append((xTmp,yTmp))
+                    else:
+                        overlap += 1
+                    
             else:
                 continue
         
-            
         
         currentCoverage = len(coveredCells) / maximumCoverage
-        return currentCoverage,coveredCells
+        return currentCoverage,coveredCells, overlap
 
     def OpenCells(self):
         coveredCells = []

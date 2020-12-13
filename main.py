@@ -44,14 +44,14 @@ def main():
 
 
 
-    totalAgents = 20
-    rangeLength = 12
+    totalAgents = 50
+    rangeLength = 6
     agents = AgentClass.Agent(totalAgents,test.grid,rangeLength)
 
 
     agents.GeneratePositions()
     agents.agentRange()
-    currentCoverage,coveragePosition = agents.CheckCoverage()
+    currentCoverage,coveragePosition,overlap = agents.CheckCoverage()
 
     #print("CoveragePosition \n ", coveragePosition)
     #print("Starting coverage with random initialized positions: ", currentCoverage)
@@ -92,7 +92,13 @@ def main():
     threshold = 1
     #Test a couple of runs
     #TODO When two agents are on the same spot an error occurs
-    for iteration in range(50):
+    vecLen = 1 + 10*totalAgents
+    tVec = np.arange(vecLen)
+    covVec  = np.zeros(vecLen)
+    covVec[0] = currentCoverage
+    overlapVec = np.zeros(vecLen)
+    overlapVec[0] = overlap
+    for iteration in range(10):
         agents.resetCounter()
         print("iteration: ", iteration)
         for agent in range(totalAgents): ##TODO make the list a permutation of each agent
@@ -158,11 +164,13 @@ def main():
             agents.MoveOverlap(agent, cellOverloaded)
             
 
-            currentCoverage,coveragePosition = agents.CheckCoverage()
-            if currentCoverage < previousCoverage:
-                #agents.Moveold(agent,(xOld,yOld))
-                pass
-            previousCoverage = currentCoverage
+            currentCoverage,coveragePosition, overlap = agents.CheckCoverage()
+            covVec[agent + iteration*totalAgents] = currentCoverage
+            overlapVec[agent + iteration*totalAgents] = overlap
+            # if currentCoverage < previousCoverage:
+            #     #agents.Moveold(agent,(xOld,yOld))
+            #     pass
+            # previousCoverage = currentCoverage
             #print("Coverage after {} iterations at agent {}:  ".format(i,agent), currentCoverage)
             for c in coveragePlot:
                 canvas.delete(c)
@@ -229,6 +237,13 @@ def main():
 
     #Cell overloaded contains coordinates from xStatus,yStatus in which the agent overlaps with another agent.
     #Move the opposite direction of coordinates in cellOverloaded
+    
+    np.savetxt("covVec.csv", covVec, delimiter=",")
+    np.savetxt("overlapVec.csv", overlapVec, delimiter=",")
+    np.savetxt("tVec.csv", tVec, delimiter=",")
+    maxPossibleCov = len(agents.reachableCellCoverage)
+    maxV = maxPossibleCov/(gridSize**2)*np.ones(vecLen)
+    np.savetxt("maxPossible.csv", maxV, delimiter=",")
     print('Done')
     Tk.mainloop(canvas)
             
