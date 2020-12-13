@@ -15,16 +15,16 @@ class Agent:
 
         self.buildingLocations = np.where(self.grid == 2)
         #print(self.buildingLocations)
-        self.occupied = np.full((self.gridSize, self.gridSize),-1)  #Lists if the grid-tile is occupied with the agents index, and if not the list has a -1 value in that place.
+        self.occupied = np.full((self.gridSize, self.gridSize),-10)  #Lists if the grid-tile is occupied with the agents index, and if not the list has a -1 value in that place.
+        self.occupied[self.buildingLocations[0][:],self.buildingLocations[1][:]] = -1
         self.rangeLength = rangeLength
-
+        print(self.occupied)
         self.reachableCellCoverage = []
         self.eachTileRange = []
         self.FindAlLReachable()
         self.corners = []
         self.FindCorners()
         self.counterPlacement = []
-        print(self.corners)
         
         
 
@@ -162,7 +162,7 @@ class Agent:
         y = [xy[0]]
         tmpList = []
         tmpList.append((x[0],y[0]))
-        for i in range(3):
+        for i in range(2):
             reach = i + 1
             neighbourhood = len(x)
             for iNeighbour in range(neighbourhood):
@@ -241,7 +241,7 @@ class Agent:
         for cellPair in openCells:
             dist = self.Get_distance(allOverlap,cellPair)
             openCluster = self.TmpAgentRange(cellPair)
-            if len(openCluster) >= 20:
+            if len(openCluster) >= 8:
                 if dist < minDist:
                     minDist = dist
                     coordinates = cellPair
@@ -275,7 +275,7 @@ class Agent:
         yAgent = int(self.y[agent]) #move backwards from first agent found that has overlap Fix so it moves away from average of all overlapping agents or something                
         
         #moveOverlap2 = list(zip(*moveOverlap2))
-        
+        coverageBefore, tmpDontUse = self.CheckCoverage()
         agentCoverage = len(self.status[agent][0])
         if agentCoverage > 0.7*2*self.rangeLength*(self.rangeLength+1):
             #Optimal position don't move it
@@ -309,7 +309,7 @@ class Agent:
                 if distance == -11:
                     self.MoveAgent2(agent)
                     return
-                if distance < 9:
+                if distance < 5:
                     coordinates =  self.Get_shortest_distance((xAgent,yAgent),openCells)
                     self.counterPlacement.append(coordinates)
                     print("Dist")
@@ -321,8 +321,8 @@ class Agent:
                     newY = (coordinates[1])
                     newY = int(round(newY))
 
-                    print("New:", newX,newY)
-                    print("old:", xAgent,yAgent)
+                    #print("New:", newX,newY)
+                    #print("old:", xAgent,yAgent)
                     break
                     #totalDistance  += distance
                 else:
@@ -374,11 +374,15 @@ class Agent:
                     TmpnewY = distancesFromBuildings[1]
                     #tmpCoverage = self.TmpAgentRange((TmpnewX,TmpnewY))
                     if self.occupied[TmpnewX][TmpnewY] == -1:
-                        self.occupied[xAgent][yAgent] = -1 #Makes the old tile usuable for other agents
                         self.x[agent] = TmpnewX
                         self.y[agent] = TmpnewY
-                        self.occupied[TmpnewX][TmpnewY] = agent #Updates the building occupancy
-                        #print("Found")
+                        coverageAfter, tmpDontUse = self.CheckCoverage()
+                        if coverageAfter > 0.9*coverageBefore:
+                            self.occupied[xAgent][yAgent] = -1 #Makes the old tile usuable for other agents
+                            self.occupied[TmpnewX][TmpnewY] = agent #Updates the building occupancy
+                        else:
+                            self.x[agent] = xAgent
+                            self.y[agent] = yAgent
                         return
                     else:
                         #distancesFromBuildings = np.delete(distancesFromBuildings,closestBuildings[0][chosenBuilding]) #Removes the tile from consideration
@@ -391,23 +395,32 @@ class Agent:
                         if len(tmpCorners) == 0:
                             break
                 #distancesFromBuildings = np.sqrt((newX**2 - self.buildingLocations[0][:])**2 + (newY**2 - self.buildingLocations[1][:])**2) #Lists the distances to the closest tile with a building on it compared to the suggest new point
-            while True:
-                closestBuildings = np.where((distancesFromBuildings == min(distancesFromBuildings)))
-                chosenBuilding = np.random.randint(len(closestBuildings))
-                TmpnewX = self.buildingLocations[0][closestBuildings[0][chosenBuilding]]
-                TmpnewY = self.buildingLocations[1][closestBuildings[0][chosenBuilding]]
-                #tmpCoverage = self.TmpAgentRange((TmpnewX,TmpnewY))
-                if self.occupied[TmpnewX][TmpnewY] == -1:
-                    self.occupied[xAgent][yAgent] = -1 #Makes the old tile usuable for other agents
-                    self.x[agent] = TmpnewX
-                    self.y[agent] = TmpnewY
-                    self.occupied[TmpnewX][TmpnewY] = agent #Updates the building occupancy
-                    #print("Found")
-                    break
-                else:
-                    distancesFromBuildings = np.delete(distancesFromBuildings,closestBuildings[0][chosenBuilding]) #Removes the tile from consideration
-                    if len(distancesFromBuildings) == 0:
-                        break
+            # while True:
+            #     closestBuildings = np.where((distancesFromBuildings == min(distancesFromBuildings)))
+            #     chosenBuilding = np.random.randint(len(closestBuildings))
+            #     TmpnewX = self.buildingLocations[0][closestBuildings[0][chosenBuilding]]
+            #     TmpnewY = self.buildingLocations[1][closestBuildings[0][chosenBuilding]]
+            #     #tmpCoverage = self.TmpAgentRange((TmpnewX,TmpnewY))
+            #     if self.occupied[TmpnewX][TmpnewY] == -1:
+            #         # self.occupied[xAgent][yAgent] = -1 #Makes the old tile usuable for other agents
+            #         # self.x[agent] = TmpnewX
+            #         # self.y[agent] = TmpnewY
+            #         # self.occupied[TmpnewX][TmpnewY] = agent #Updates the building occupancy
+            #         # #print("Found")
+            #         self.x[agent] = TmpnewX
+            #         self.y[agent] = TmpnewY
+            #         coverageAfter, tmpDontUse = self.CheckCoverage()
+            #         if coverageAfter > 0.8*coverageBefore:
+            #             self.occupied[xAgent][yAgent] = -1 #Makes the old tile usuable for other agents
+            #             self.occupied[TmpnewX][TmpnewY] = agent #Updates the building occupancy
+            #         else:
+            #             self.x[agent] = xAgent
+            #             self.y[agent] = yAgent
+            #         break
+            #     else:
+            #         distancesFromBuildings = np.delete(distancesFromBuildings,closestBuildings[0][chosenBuilding]) #Removes the tile from consideration
+            #         if len(distancesFromBuildings) == 0:
+            #             break
 
             
     
@@ -431,13 +444,14 @@ class Agent:
         # coordinatePair = openCells[r]
         # newX = coordinatePair[0]
         # newY = coordinatePair[1]
-        print("randomness")
+        #print("randomness")
         for (newX,newY) in self.corners:
             if self.occupied[newX,newY] == -1:
+                self.occupied[xAgent][yAgent] = -1
                 self.x[agent]  = newX
                 self.y[agent]  = newY
                 self.occupied[newX][newY] = agent
-                return
+                break
 
         # if newX // self.gridSize == 0 and newY // self.gridSize == 0 and self.grid[newX][newY] == 2 and self.occupied[newX][newY] == -1: 
         #     #self.occupied[xAgent][yAgent] = -1

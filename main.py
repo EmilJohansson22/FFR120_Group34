@@ -103,8 +103,8 @@ def main():
 
 
             if len(agents.status[agent]) == 0:
-                randomMove = False
-            elif len(agents.status[agent][0]) < 9:#0.25*2*rangeLength*(rangeLength+1): #TODO Change threshold
+                randomMove = True
+            elif len(agents.status[agent][0]) < 9: #0.25*2*rangeLength*(rangeLength+1): #TODO Change threshold
                 randomMove = False
             else:
                 randomMove = False
@@ -163,7 +163,6 @@ def main():
                 #agents.Moveold(agent,(xOld,yOld))
                 pass
             previousCoverage = currentCoverage
-            coveragePosition,coveredCells = agents.OpenReachable()
             #print("Coverage after {} iterations at agent {}:  ".format(i,agent), currentCoverage)
             for c in coveragePlot:
                 canvas.delete(c)
