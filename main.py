@@ -22,6 +22,7 @@ def main():
 
     test = EnviromentClass.Enviroment(gridSize) 
     test.PlaceBuildings(10)
+    #10 buildngs
     #test.DeterministicEnviroment()
     
     #Build Grid
@@ -44,15 +45,14 @@ def main():
 
 
 
-    totalAgents = 50
-    rangeLength = 6
+    totalAgents = 20
+    rangeLength = 5
     agents = AgentClass.Agent(totalAgents,test.grid,rangeLength)
 
 
     agents.GeneratePositions()
     agents.agentRange()
     currentCoverage,coveragePosition,overlap = agents.CheckCoverage()
-
     #print("CoveragePosition \n ", coveragePosition)
     #print("Starting coverage with random initialized positions: ", currentCoverage)
     # print(agents.status)
@@ -85,6 +85,7 @@ def main():
     #print("coveragePlot : ", coveragePlot)
     tk.update()    
     timer.sleep(1)
+    currentCoverage,coveragePosition,overlap = agents.CheckCoverage()
     bestCoverage = currentCoverage
     previousCoverage = currentCoverage
     bestX = agents.x.copy()
@@ -98,8 +99,11 @@ def main():
     covVec[0] = currentCoverage
     overlapVec = np.zeros(vecLen)
     overlapVec[0] = overlap
+    print("Sleep")
+    #timer.sleep(10)
     for iteration in range(10):
-        agents.resetCounter()
+        if iteration % 3 == 0:
+            agents.resetCounter()
         print("iteration: ", iteration)
         for agent in range(totalAgents): ##TODO make the list a permutation of each agent
             #print("Agent number\n",agent)
@@ -110,14 +114,15 @@ def main():
 
             if len(agents.status[agent]) == 0:
                 randomMove = True
-            elif len(agents.status[agent][0]) < 9: #0.25*2*rangeLength*(rangeLength+1): #TODO Change threshold
-                randomMove = False
+            elif len(agents.status[agent][0]) < 0.25*2*rangeLength*(rangeLength+1): #TODO Change threshold
+                randomMove = True
             else:
                 randomMove = False
 
             if randomMove:
                 print('random move')
                 agents.MoveAgent2(agent)
+                #agents.MoveOverlap2(agent)
                 agents.agentRange()
                 
             currentStatus = agents.status[agent]
@@ -128,8 +133,7 @@ def main():
             yStatus = currentStatus[1]
             #decayStatus = currentStatus[2]
             decayStatus = 2
-            currentLen = len(xStatus)
-            
+            currentLen = len(xStatus)            
             cellOverloaded = []
             moveOverlap2 = []
             for agent2 in range(totalAgents):
@@ -242,7 +246,7 @@ def main():
     np.savetxt("overlapVec.csv", overlapVec, delimiter=",")
     np.savetxt("tVec.csv", tVec, delimiter=",")
     maxPossibleCov = len(agents.reachableCellCoverage)
-    maxV = maxPossibleCov/(gridSize**2)*np.ones(vecLen)
+    maxV = maxPossibleCov/(gridSize**2- len(agents.buildingLocations[0])) *np.ones(vecLen)
     np.savetxt("maxPossible.csv", maxV, delimiter=",")
     print('Done')
     Tk.mainloop(canvas)
