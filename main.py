@@ -21,13 +21,13 @@ def main():
 
 
     test = EnviromentClass.Enviroment(gridSize) 
-    test.PlaceBuildings(10)
+    test.PlaceBuildings_version2(10)
     #10 buildngs
     #test.DeterministicEnviroment()
     
     #Build Grid
     gridPlot = []
-    ccolor = ['black','gray','red']
+    ccolor = ['black','light gray','red']
     for i in range(gridSize):     # Generate animated particles in Canvas 
         for j in range(gridSize):     # Generate animated particles in Canvas 
             if test.grid[i,j] == test.building:
@@ -36,6 +36,12 @@ def main():
                                                     (i+1)*res/gridSize,                               
                                                     (j+1)*res/gridSize,                               
                                                     outline=ccolor[0], fill=ccolor[0]) )
+            elif test.grid[i,j] == test.road:
+                gridPlot.append( canvas.create_rectangle( (i)*res/gridSize,                                           
+                                                    (j)*res/gridSize,                           
+                                                    (i+1)*res/gridSize,                               
+                                                    (j+1)*res/gridSize,                               
+                                                    outline=ccolor[0], fill="gray") )
             else:
                 gridPlot.append( canvas.create_rectangle( (i)*res/gridSize,                                           
                                                     (j)*res/gridSize,                           
